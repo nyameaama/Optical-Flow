@@ -58,3 +58,27 @@ void FileHandler::writeText(const std::string& filename, const std::string& cont
         file.close();
     }
 }
+
+std::string FileHandler::getConfigValue(const std::string& parameter) {
+    std::ifstream configFile("config.txt");
+    std::string line;
+    std::string value;
+
+    if (configFile.is_open()) {
+        while (std::getline(configFile, line)) {
+            // Find the line containing the parameter
+            if (line.find(parameter) != std::string::npos) {
+                // Extract the value within the square brackets
+                size_t startPos = line.find('[');
+                size_t endPos = line.find(']');
+                if (startPos != std::string::npos && endPos != std::string::npos && startPos < endPos) {
+                    value = line.substr(startPos + 1, endPos - startPos - 1);
+                }
+                break;
+            }
+        }
+        configFile.close();
+    }
+
+    return value;
+}
