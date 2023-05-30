@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
     }
 
     //Get content path from config file
-    std::string path = initObj -> readfilePathfromConfig();
+    std::string path = initObj -> readFilePathFromConfig();
 
     //Perform content check
     bool contentAvailable = initObj -> contentCheck(path);

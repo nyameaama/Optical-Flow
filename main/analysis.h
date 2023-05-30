@@ -7,7 +7,7 @@
 
 class _Analysis{
     public:
-        void analysisStep1();
+        void analysisStep1(std::string &path);
 
 
 };
