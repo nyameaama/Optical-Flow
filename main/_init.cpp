@@ -2,7 +2,7 @@
 
 //Read Region of Interest Coordinates from Configuration File
 std::string _initialise::readROIFromConfig(){
-    FileHandler *object = new FileHandler();
+    auto *object = new FileHandler();
     std::string parameter = "ROI";
     std::string value = object -> getConfigValue(parameter);
     if (value.empty()) {
@@ -15,7 +15,7 @@ std::string _initialise::readROIFromConfig(){
 
 //Read File Path from Configuration File
 std::string readFilePathFromConfig(){
-    FileHandler *object = new FileHandler();
+    auto *object = new FileHandler();
     std::string parameter = "PATH";
     std::string value = object -> getConfigValue(parameter);
     if (value.empty()) {
