@@ -19,10 +19,10 @@ struct VideoProperties {
 class _initialise {
     public:
         //Read Region of Interest Coordinates from Configuration File
-        std::string readROIfromConfig();
+        std::string readROIFromConfig();
 
         //Read File Path from Configuration File
-        std::string readfilePathfromConfig();
+        std::string readFilePathFromConfig();
 
 
         uint8_t readFrameLimit();

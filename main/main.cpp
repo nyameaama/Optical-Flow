@@ -3,38 +3,38 @@
 #include "_init.h"
 #include "analysis.h"
 
-int main() {
-    _initialise *obj = new _initialise();
-    _Analysis *obj2 = new _Analysis();
+int main(int argc, char* argv[]) {
+    auto *initObj = new _initialise();
+    auto *analysisObj = new _Analysis();
 
     //Check if dependencies available
-    bool Dcheck = obj -> dependencyCheck();
-    if(!Dcheck){
-        return;
+    bool dependencyAvailable = initObj -> dependencyCheck();
+    if (!dependencyAvailable) {
+        return 1;
     }
 
     //Get content path from config file
-    std::string path = obj -> readfilePathfromConfig();
+    std::string path = initObj -> readfilePathfromConfig();
 
     //Perform content check
-    bool Ccheck = obj -> contentCheck(path);
-    if(!Ccheck){
-        std::cout << "There is problem loading the experimental data" << std::endl;
-        return;
-    }else{
+    bool contentAvailable = initObj -> contentCheck(path);
+    if (!contentAvailable) {
+        std::cerr << "There is problem loading the experimental data\n";
+        return 1;
+    } else {
         //Push some video metadata to output csv
 
     }
 
     //Get Region of Interest from config file
-    uint16_t ROI;
+    uint16_t regionOfInterest;
 
     //Start Performing analysis
 
     //Initial Step1
-    obj2 -> analysisStep1(path);
+    analysisObj -> analysisStep1(path);
 
 
-    delete obj;
-    delete obj2;
+    delete initObj;
+    delete analysisObj;
 }
