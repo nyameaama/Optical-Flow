@@ -3,12 +3,12 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
 
 class _Analysis{
     public:
-        void analysisStep1(const std::string &filename);
-
+        std::tuple<cv::Mat, cv::Mat, cv::Mat> analysisStep1(const std::string& filename, std::vector<int>& vector_param);
 
 };
 

@@ -1,2 +1,5 @@
 BUILD CMD (N):
-g++ -std=c++17 -o output build_test.cpp -I/usr/local/opt/opencv/include/opencv4 -L/usr/local/opt/opencv/lib -lopencv_core -lopencv_highgui -lopencv_imgcodecs
+g++ -std=c++17 -o output build_test.cpp `pkg-config --cflags --libs opencv4`
+
+FULL BUILD (N):
+g++ -std=c++17 -o fullBuild main.cpp _init.cpp analysis.cpp _FileHandler.cpp  `pkg-config --cflags --libs opencv4`

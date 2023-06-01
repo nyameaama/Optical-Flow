@@ -2,10 +2,13 @@
 #include <string>
 #include "_init.h"
 #include "analysis.h"
+#include "_FileHandler.h"
 
 int main(int argc, char* argv[]) {
+    std::cout << "Optical Flow on In-Vitro Experimentations" << std::endl;
     auto *initObj = new _initialise();
     auto *analysisObj = new _Analysis();
+    auto *fileHandlerObj = new FileHandler();
 
     //Check if dependencies available
     bool dependencyAvailable = initObj -> dependencyCheck();
@@ -15,7 +18,13 @@ int main(int argc, char* argv[]) {
 
     //Get content path from config file
     std::string path = initObj -> readFilePathFromConfig();
+    //Get output path from config file
+    std::string out = initObj -> readOutputPathFromConfig();
 
+    fileHandlerObj -> writeToCSV(out,1,1,"Optical Flow on In-Vitro Experimentations");
+    
+    std::cout << "Experimental File: ";
+    std::cout << path << std::endl;
     //Perform content check
     bool contentAvailable = initObj -> contentCheck(path);
     if (!contentAvailable) {
@@ -23,18 +32,19 @@ int main(int argc, char* argv[]) {
         return 1;
     } else {
         //Push some video metadata to output csv
-
+        fileHandlerObj -> writeToCSV(out,5,1,"METADATA");
     }
-
     //Get Region of Interest from config file
-    uint16_t regionOfInterest;
-
+    std::string regionOfInterest = initObj -> readROIFromConfig();
+    std::vector<int> ROI_int_conversion = initObj -> convertStringToIntArray(regionOfInterest);
     //Start Performing analysis
 
     //Initial Step1
-    analysisObj -> analysisStep1(path);
+    std::tuple<cv::Mat, cv::Mat, cv::Mat> result = analysisObj -> analysisStep1(path, ROI_int_conversion);
 
+    //Next Step
 
+    //Delete Objects
     delete initObj;
     delete analysisObj;
 }

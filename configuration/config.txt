@@ -1,4 +1,0 @@
-//Region of Interest
-ROI = ["100","100","100","100"];
-//Video Path
-FILE PATH = ["/configuration/config.txt"];

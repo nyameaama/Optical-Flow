@@ -5,6 +5,7 @@
 #include"_FileHandler.h"
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -24,8 +25,8 @@ class _initialise {
         //Read File Path from Configuration File
         std::string readFilePathFromConfig();
 
-
-        uint8_t readFrameLimit();
+        //Read File Path from Configuration File
+        std::string readOutputPathFromConfig();
 
         //Check to see if host machine has OpenCV and all related dependencies
         bool dependencyCheck();
@@ -34,6 +35,8 @@ class _initialise {
         bool contentCheck(const std::string& filename);
 
         VideoProperties getVideoProperties(const std::string& filepath);
+
+        std::vector<int> convertStringToIntArray(const std::string& values);
 
     private:
         bool isVideoReadable(const std::string& filename);

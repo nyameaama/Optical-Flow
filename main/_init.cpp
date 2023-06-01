@@ -14,7 +14,7 @@ std::string _initialise::readROIFromConfig(){
 }
 
 //Read File Path from Configuration File
-std::string readFilePathFromConfig(){
+std::string _initialise::readFilePathFromConfig(){
     auto *object = new FileHandler();
     std::string parameter = "PATH";
     std::string value = object -> getConfigValue(parameter);
@@ -26,17 +26,27 @@ std::string readFilePathFromConfig(){
     return value;
 }
 
-uint8_t _initialise::readFrameLimit(){
-
+//Read File Path from Configuration File
+std::string _initialise::readOutputPathFromConfig(){
+    auto *object = new FileHandler();
+    std::string parameter = "OUTPUT";
+    std::string value = object -> getConfigValue(parameter);
+    if (value.empty()) {
+        std::cerr << "Parameter '" << parameter << "' not found in the config file.\n";
+        return "";
+    }
+    delete object;
+    return value;
 }
 
 //Check to see if host machine has OpenCV and all related dependencies
 bool _initialise::dependencyCheck(){
     try {
         //checking for the 'OpenCV' library, you can try to include an OpenCV header file
-#include <opencv2/core/core.hpp>
+        #include <opencv2/core/core.hpp>
 
         // If the library is installed, this code block will be executed
+        std::cout << "Initial Check: ";
         std::clog << "Library is installed.\n";
         return true;
     }
@@ -95,4 +105,18 @@ VideoProperties _initialise::getVideoProperties(const std::string& filepath) {
     capture.release();
 
     return {numFrames, fps, width, height};
+}
+
+std::vector<int> _initialise::convertStringToIntArray(const std::string& values) {
+    std::stringstream ss(values);
+    std::vector<int> intArray;
+    int value;
+
+    while (ss >> value) {
+        intArray.push_back(value);
+        if (ss.peek() == ',')
+            ss.ignore();
+    }
+
+    return intArray;
 }
