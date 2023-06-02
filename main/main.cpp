@@ -3,6 +3,7 @@
 #include "_init.h"
 #include "analysis.h"
 #include "_FileHandler.h"
+#include "OpticalFlowCalc.h"
 
 int main(int argc, char* argv[]) {
     std::cout << "Optical Flow on In-Vitro Experimentations" << std::endl;
@@ -43,8 +44,13 @@ int main(int argc, char* argv[]) {
     std::tuple<cv::Mat, cv::Mat, cv::Mat> result = analysisObj -> analysisStep1(path, ROI_int_conversion);
 
     //Next Step
+    cv::VideoCapture video(path);
+    auto *opticalFlowObj = new OpticalFlow(video, ROI_int_conversion);
+    opticalFlowObj -> runOpticalFlow();
 
     //Delete Objects
     delete initObj;
     delete analysisObj;
+    delete fileHandlerObj;
+    delete opticalFlowObj;
 }
