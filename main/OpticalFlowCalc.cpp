@@ -39,11 +39,13 @@ cv::Mat OpticalFlow::calculateOpticalFlow() {
 }
 
 void OpticalFlow::updateROI(cv::Mat& flow) {
-    cv::Scalar mean_flow = cv::mean(flow);
+    cv::Scalar mean_flow = cv::mean(flow); //Takes the average velocity of the flow
 
+    //Updates the ROI accordingly
     OpticalFlow::ROI_Rect.x += mean_flow[0];
     OpticalFlow::ROI_Rect.y += mean_flow[1];
 
+    //sets the previous ROI to the current ROI
     OpticalFlow::prevROI = OpticalFlow::prevFrame(OpticalFlow::ROI_Rect);
 }
 
