@@ -112,7 +112,23 @@ void FileHandler::writeText(const std::string& filename, const std::string& cont
     }
 }
 
-std::string FileHandler::getConfigValue(const std::string& parameter) {
+std::string FileHandler::getConfigValue(const std::string& input) {
+    std::ifstream configFile("configuration/config.txt");
+    std::string line;
+    std::regex regexInput(input + "\\s*=\\s*\\[(.*?)\\]");
+
+    while (std::getline(configFile, line)) {
+        std::smatch match;
+        if (std::regex_search(line, match, regexInput)) {
+            if (match.size() > 1) {
+                return match[1].str();
+            }
+        }
+    }
+    return "";
+}
+
+/*std::string FileHandler::getConfigValue(const std::string& parameter) {
     std::ifstream configFile("configuration/config.txt");
     std::string line;
     std::string value;
@@ -134,4 +150,4 @@ std::string FileHandler::getConfigValue(const std::string& parameter) {
     }
 
     return value;
-}
+}*/
