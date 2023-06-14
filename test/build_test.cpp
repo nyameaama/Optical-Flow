@@ -1,7 +1,8 @@
 #include <iostream>
-#include <opencv2/core/core.hpp>
+/*#include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/imgproc/imgproc.hpp>*/
+#include "../main/_init.h"
 
 int main() {
     // Check if OpenCV is installed and accessible
@@ -11,6 +12,13 @@ int main() {
     }
     std::cout << "OpenCV version is ";
     std::cout << CV_MAJOR_VERSION << std::endl;
+
+    auto *initObj = new _initialise();
+    //Get content path from config file
+    std::string path = initObj -> readFilePathFromConfig();
+    //Get output path from config file
+    std::string out = initObj -> readOutputPathFromConfig();
+
 
     // Load and display an image
     cv::Mat image = cv::imread("/Users/nyameaama/Downloads/Optical-Flow-Featured.png");
@@ -32,6 +40,8 @@ int main() {
     cv::namedWindow("Image", cv::WINDOW_NORMAL);
     cv::imshow("Image", image);
     cv::waitKey(0);
+
+    delete initObj;
 
     return 0;
 }
