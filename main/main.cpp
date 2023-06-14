@@ -22,6 +22,8 @@ int main(int argc, char* argv[]) {
     //Get output path from config file
     std::string out = initObj -> readOutputPathFromConfig();
 
+    if (path.empty() || out.empty()) return 1;
+
     fileHandlerObj -> writeToCSV(out,1,1,"Optical Flow on In-Vitro Experimentations");
     
     std::cout << "Experimental File: ";

@@ -1,7 +1,7 @@
 #include "OpticalFlowCalc.h"
 
 OpticalFlow::OpticalFlow(cv::VideoCapture &videoCapture, std::vector<int>& vector_param) {
-    videoCapture >> OpticalFlow::prevFrame;
+    videoCapture >> OpticalFlow::prevFrame; //Make sure videoCapture is not empty
     // Convert frame to grayscale
     cv::cvtColor(OpticalFlow::prevFrame, OpticalFlow::prevFrame, cv::COLOR_BGR2GRAY);
     // Get Region of Interest and define it in OpenCV
@@ -13,13 +13,17 @@ OpticalFlow::OpticalFlow(cv::VideoCapture &videoCapture, std::vector<int>& vecto
 }
 
 void OpticalFlow::runOpticalFlow() {
-    while (true) {
+    cv::Mat coloredFlow, flow;
+    while (true) { //for every frame of the video
         OpticalFlow::video >> OpticalFlow::currFrame;
         if (OpticalFlow::currFrame.empty()) break;
 
-        cv::Mat flow = OpticalFlow::calculateOpticalFlow();
+        flow = OpticalFlow::calculateOpticalFlow();
         OpticalFlow::updateROI(flow);
-        OpticalFlow::visualizeOpticalFlow(flow);
+
+        // it's a frame, so I guess it can be shown for the visualization
+        coloredFlow = OpticalFlow::visualizeOpticalFlow(flow);
+        cv::imshow("Optical Flow visualized", coloredFlow); //somehow forgot about this
 
         OpticalFlow::prevFrame = OpticalFlow::currFrame;
     }
@@ -50,13 +54,14 @@ void OpticalFlow::updateROI(cv::Mat& flow) {
 }
 
 cv::Mat OpticalFlow::visualizeOpticalFlow(cv::Mat& flow) {
-    cv::Mat cFlow;
-    cvtColor(OpticalFlow::prevFrame, cFlow, cv::COLOR_GRAY2BGR);
-    drawOpticalFlow(flow, cFlow, 16);
-    return cFlow;
+    cv::Mat coloredFlowFrame;
+    cvtColor(OpticalFlow::prevFrame, coloredFlowFrame, cv::COLOR_GRAY2BGR);
+    drawOpticalFlow(flow, coloredFlowFrame, 16);
+    return coloredFlowFrame;
 }
 
 void OpticalFlow::drawOpticalFlow(const cv::Mat& flowMat, cv::Mat& cFlowMap, int step){
+    //tbh im not really sure what goes on here, it's just whatever gpt gave me
     for(int y = 0; y < cFlowMap.rows; y += step){
         for(int x = 0; x < cFlowMap.cols; x += step){
             const auto& fxy = flowMat.at<cv::Point2f>(y, x);
