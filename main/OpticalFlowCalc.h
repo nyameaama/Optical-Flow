@@ -1,4 +1,4 @@
-#ifndef OPTICAL_FLOW_OPTICALFLOWCALC_H
+/*#ifndef OPTICAL_FLOW_OPTICALFLOWCALC_H
 #define OPTICAL_FLOW_OPTICALFLOWCALC_H
 
 #include "opencv2/opencv.hpp"
@@ -22,3 +22,4 @@ class OpticalFlow {
 };
 
 #endif //OPTICAL_FLOW_OPTICALFLOWCALC_H
+*/

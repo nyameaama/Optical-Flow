@@ -1,4 +1,4 @@
-#include "OpticalFlowCalc.h"
+/*#include "OpticalFlowCalc.h"
 
 OpticalFlow::OpticalFlow(cv::VideoCapture &videoCapture, std::vector<int>& vector_param) {
     videoCapture >> OpticalFlow::prevFrame; //Make sure videoCapture is not empty
@@ -71,3 +71,4 @@ void OpticalFlow::drawOpticalFlow(const cv::Mat& flowMat, cv::Mat& cFlowMap, int
         }
     }
 }
+*/
