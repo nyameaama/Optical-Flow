@@ -7,6 +7,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include "_init.h"
+#include "_FileHandler.h"
 
 #define drawCross(center, color, d) \
     line(display_image, Point(center.x - d, center.y - d), Point(center.x + d, center.y + d), color, 2, LINE_AA, 0); \
@@ -14,7 +15,7 @@
 
 void on_mouse(int e, int x, int y, int d, void *ptr);
 
-class MouseKalmanFilter {
+class OpticalFlowKalmanFilter {
 public:
     void run();
     void drawRectangle(cv::Mat& image, const cv::Point& center, int size, const cv::Scalar& color);

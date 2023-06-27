@@ -42,14 +42,10 @@ int main(int argc, char* argv[]) {
     //Start Performing analysis
     //Next Step
     cv::VideoCapture video(path);
-    //auto *opticalFlowObj = new OpticalFlow(video, ROI_int_conversion);
-    //opticalFlowObj -> processFrames(video);
-
-    MouseKalmanFilter filter;
+    OpticalFlowKalmanFilter filter;
     filter.run();
 
     //Delete Objects
     delete initObj;
     delete fileHandlerObj;
-    //delete opticalFlowObj;
 }
