@@ -1,25 +1,29 @@
-#ifndef _ANALYSIS_H
-#define _ANALYSIS_H
+#ifndef MOUSE_KALMAN_H
+#define MOUSE_KALMAN_H
 
-#include <vector>
+#include "opencv2/video/tracking.hpp"
+#include <iostream>
+#include <stdio.h>
 #include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include "_init.h"
 
-class OpticalFlow {
+#define drawCross(center, color, d) \
+    line(display_image, Point(center.x - d, center.y - d), Point(center.x + d, center.y + d), color, 2, LINE_AA, 0); \
+    line(display_image, Point(center.x + d, center.y - d), Point(center.x - d, center.y + d), color, 2, LINE_AA, 0)
+
+void on_mouse(int e, int x, int y, int d, void *ptr);
+
+class MouseKalmanFilter {
 public:
-    OpticalFlow(cv::VideoCapture& videoCapture, std::vector<int>& roiParams);
-
-    void processFrames(cv::VideoCapture& videoCapture);
-
+    void run();
+    void drawRectangle(cv::Mat& image, const cv::Point& center, int size, const cv::Scalar& color);
+    cv::Point convertROIToXY(int roiX, int roiY, int roiWidth, int roiHeight);
 private:
-    cv::Mat prevFrame;
-    std::vector<cv::Point2f> prevPoints;
-    std::vector<cv::Point2f> currPoints;
-    std::vector<uchar> status;
-    std::vector<float> err;
-    cv::Mat state;
-    cv::Mat measurement;
-    cv::KalmanFilter kalmanFilter;
-    std::vector<int> roiParams;
+    cv::KalmanFilter KF;
+    cv::Mat display_image;
+    double ticks;
+    cv::Point mousePos;
 };
 
-#endif  // _ANALYSIS_H
+#endif

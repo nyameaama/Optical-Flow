@@ -3,7 +3,6 @@
 #include "_init.h"
 #include "_analysis.h"
 #include "_FileHandler.h"
-#include "OpticalFlowCalc.h"
 
 int main(int argc, char* argv[]) {
     std::cout << "Optical Flow on In-Vitro Experimentations" << std::endl;
@@ -43,11 +42,14 @@ int main(int argc, char* argv[]) {
     //Start Performing analysis
     //Next Step
     cv::VideoCapture video(path);
-    auto *opticalFlowObj = new OpticalFlow(video, ROI_int_conversion);
-    opticalFlowObj -> processFrames(video);
+    //auto *opticalFlowObj = new OpticalFlow(video, ROI_int_conversion);
+    //opticalFlowObj -> processFrames(video);
+
+    MouseKalmanFilter filter;
+    filter.run();
 
     //Delete Objects
     delete initObj;
     delete fileHandlerObj;
-    delete opticalFlowObj;
+    //delete opticalFlowObj;
 }

@@ -1,27 +1,32 @@
-#include "_analysis.h"
+#include "opencv2/video/tracking.hpp"
+#include <iostream>
+#include <stdio.h>
+#include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
+#define drawCross(center, color, d)                                                              \
+    line(display_image, Point(center.x - d, center.y - d), Point(center.x + d, center.y + d),   \
+         color, 2, LINE_AA, 0);                                                                  \
+    line(display_image, Point(center.x + d, center.y - d), Point(center.x - d, center.y + d),   \
+         color, 2, LINE_AA, 0)
 
 using namespace cv;
 using namespace std;
 
-void on_mouse(int e, int x, int y, int d, void *ptr) {
-    cv::Point *p = (cv::Point *)ptr;
-    p->x = x;
-    p->y = y;
-}
-
-void MouseKalmanFilter::drawRectangle(cv::Mat& image, const cv::Point& center, int size, const cv::Scalar& color) {
+void drawRectangle(cv::Mat& image, const cv::Point& center, int size, const cv::Scalar& color) {
     int halfSize = size / 2;
     cv::Rect rect(center.x - halfSize, center.y - halfSize, size, size);
     cv::rectangle(image, rect, color, 2);
 }
 
-cv::Point MouseKalmanFilter::convertROIToXY(int roiX, int roiY, int roiWidth, int roiHeight) {
-    int x = roiX + (roiWidth / 2);
-    int y = roiY + (roiHeight / 2);
-    return cv::Point(x, y);
+
+void on_mouse(int e, int x, int y, int d, void *ptr) {
+    Point *p = (Point *)ptr;
+    p->x = x;
+    p->y = y;
 }
 
-void MouseKalmanFilter::run() {
+int main() {
     // >>> Kalman Filter Initialization
     int stateSize = 4;  // [x, y, v_x, v_y]
     int measSize = 2;   // [z_x, z_y] // we will only measure mouse cursor x and y
@@ -77,10 +82,16 @@ void MouseKalmanFilter::run() {
     // Measure Noise Covariance Matrix
     cv::setIdentity(KF.measurementNoiseCov, cv::Scalar(1e-1));
 
-    // <<< Kalman Filter initializationOnThread
+    // <<< Kalman Filter initialization
 
-    Mat display_image(600, 800, CV_8UC3);
-    namedWindow("Mouse Kalman with Velocity");
+    cv::VideoCapture video("../main/ExperimentalData/C0032.MP4");
+    if (!video.isOpened()) {
+        std::cout << "Could not open the video file." << std::endl;
+        return -1;
+    }
+
+    cv::Mat display_image(600, 800, CV_8UC3);
+    namedWindow("Video Tracking with Kalman Filter");
 
     char ch = 0;
     double ticks = 0;
@@ -105,32 +116,53 @@ void MouseKalmanFilter::run() {
         Point predictPt(state.at<float>(0), state.at<float>(1));
         // <<< Kalman Prediction
 
-        // >>> Get Mouse Point
-        setMouseCallback("Mouse Kalman with Velocity", on_mouse, &mousePos);
-        std::cout << "Mouse Position is: " << mousePos << std::endl;
-        // <<< Get Mouse Point
+        // Read the next frame from the video
+        cv::Mat frame;
+        video >> frame;
 
-        // >>> Passing the measured values to the measurement vector
-        meas.at<float>(0) = mousePos.x;
-        meas.at<float>(1) = mousePos.y;
-        // <<< Passing the measured values to the measurement vector
+        // If the frame is empty, end the loop
+        if (frame.empty())
+            break;
 
-        // >>> Kalman Update Phase
+        // Define the ROI coordinates
+        cv::Rect roi(900,500,100,100); // Adjust the values according to your desired ROI
+        
+        cv::Point objectPt(900, 550); // Example object coordinates (replace with your actual coordinates)
+
+        // Draw green rectangle around the object
+        cv::Rect rect(objectPt, cv::Size(200, 150)); // Example rectangle size (replace with your desired size)
+        cv::rectangle(frame, rect, cv::Scalar(0, 255, 0), 2); // Green rectangle (BGR color format), thickness = 2
+
+        // Extract the ROI from the frame
+        cv::Mat roiImage = frame(roi).clone();
+
+        // Convert the ROI image to grayscale and perform preprocessing (if needed)
+        cv::Mat grayImage;
+        cv::cvtColor(roiImage, grayImage, cv::COLOR_BGR2GRAY);
+
+        // Update the measurement vector with the tracking point from the ROI
+        meas.at<float>(0) = predictPt.x;
+        meas.at<float>(1) = predictPt.y;
+
+         // >>> Kalman Update Phase
         Mat estimated = KF.correct(meas);
 
         Point statePt(estimated.at<float>(0), estimated.at<float>(1));
         Point measPt(meas.at<float>(0), meas.at<float>(1));
 
-        // <<< Kalman Update Phase
+        // Visualization and drawing
 
-        cv::imshow("Mouse Kalman with Velocity", display_image);
-        display_image = Scalar::all(0);
+        // Display the frame with the ROI and tracking results
+        cv::imshow("Video Tracking with Kalman Filter", frame);
 
-        drawCross(statePt, Scalar(255, 255, 255), 5);
-        drawCross(measPt, Scalar(0, 0, 255), 5);
+        // Draw rectangles around statePt and measPt
+        drawRectangle(frame, statePt, 10, cv::Scalar(255, 255, 255)); // White rectangle
+        drawRectangle(frame, measPt, 10, cv::Scalar(0, 0, 255));     // Red rectangle
 
-        drawRectangle( display_image, statePt, 10, cv::Scalar(255, 255, 255)); // White rectangle
-        drawRectangle( display_image, measPt, 10, cv::Scalar(0, 0, 255));     // Red rectangle
+
+        // Process keyboard input
         ch = cv::waitKey(10);
-}
+    }
+
+    return 0;
 }

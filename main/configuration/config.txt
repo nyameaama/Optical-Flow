@@ -1,3 +1,3 @@
-ROI = [100,100,100,100];
+ROI = [100,100,100,100]; //X,Y,Width,Height
 PATH = [ExperimentalData/C0032.MP4];
 OUTPUT = [Optical_Flow_Output/OpticalFlowData_Output.csv];
