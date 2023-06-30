@@ -14,6 +14,7 @@ OpticalFlow::OpticalFlow(cv::VideoCapture &videoCapture, std::vector<int>& vecto
 
 void OpticalFlow::runOpticalFlow() {
     cv::Mat coloredFlow, flow;
+    int frameCount = 0;
     while (true) { //for every frame of the video
         OpticalFlow::video >> OpticalFlow::currFrame;
         if (OpticalFlow::currFrame.empty()) break;
@@ -21,11 +22,25 @@ void OpticalFlow::runOpticalFlow() {
         flow = OpticalFlow::calculateOpticalFlow();
         OpticalFlow::updateROI(flow);
 
+        OpticalFlow::saveOpticalFlowMatrix(flow, "flowMatrix_" + std::to_string(frameCount) + ".dat");
+        frameCount++;
+
         // it's a frame, so I guess it can be shown for the visualization
         coloredFlow = OpticalFlow::visualizeOpticalFlow(flow);
         cv::imshow("Optical Flow visualized", coloredFlow); //somehow forgot about this
 
         OpticalFlow::prevFrame = OpticalFlow::currFrame;
+    }
+}
+
+void OpticalFlow::saveOpticalFlowMatrix(const cv::Mat& flow, const std::string& filename) {
+    std::ofstream out(filename, std::ios::binary);
+
+    if (out.is_open()) {
+        out.write((char*)flow.data, flow.total()*flow.elemSize());
+        out.close();
+    } else {
+        std::cout << "Cannot open file for writing: " << filename << '\n';
     }
 }
 
@@ -42,7 +57,7 @@ cv::Mat OpticalFlow::calculateOpticalFlow() {
     return flow;
 }
 
-void OpticalFlow::updateROI(cv::Mat& flow) {
+void OpticalFlow::updateROI(const cv::Mat& flow) {
     cv::Scalar mean_flow = cv::mean(flow); //Takes the average velocity of the flow
 
     //Updates the ROI accordingly
@@ -53,7 +68,7 @@ void OpticalFlow::updateROI(cv::Mat& flow) {
     OpticalFlow::prevROI = OpticalFlow::prevFrame(OpticalFlow::ROI_Rect);
 }
 
-cv::Mat OpticalFlow::visualizeOpticalFlow(cv::Mat& flow) {
+cv::Mat OpticalFlow::visualizeOpticalFlow(const cv::Mat& flow) {
     cv::Mat coloredFlowFrame;
     cvtColor(OpticalFlow::prevFrame, coloredFlowFrame, cv::COLOR_GRAY2BGR);
     drawOpticalFlow(flow, coloredFlowFrame, 16);
